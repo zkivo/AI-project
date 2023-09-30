@@ -1,2 +1,2 @@
 # AI-project
-Project for the AI master course
+Project for the AI course
