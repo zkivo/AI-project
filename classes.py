@@ -11,6 +11,9 @@ class ANN:
     # [[[]]] <-> layer(node(prev links))
     w = []
 
+    # it contains the output of each layer
+    y_layers = []
+
     # format [[]] <-> layer(list of delta for each node)
     # delta[0] contains the deltas of the last layer (which is the output layer)
     delta = []
@@ -56,12 +59,16 @@ class ANN:
             print(m,prev_out,"\n")
             prev_out = np.dot(m, prev_out)
             prev_out = sigmoid(prev_out)
+            self.y_layers.append(prev_out)
             prev_out = np.insert(prev_out,0,1)
             prev_out = np.reshape(prev_out, (prev_out.size,1))
         print(prev_out)
         return prev_out
     
-    def fit_step(self, x : np.ndarray, y : np.ndarray):
+    def fit_step(self, x : np.ndarray, exp_y : np.ndarray):
+        y = self.forward(x)
         for i, layer in reversed(list(enumerate(self.w))):
             #output layer
+            temp = []
             if i == len(self.w) - 1:
+                temp.append(()*())
