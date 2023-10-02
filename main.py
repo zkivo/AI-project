@@ -6,7 +6,7 @@ ann.forward(np.array([4.3,-0.22]))
 
 exit()
 
-ds = np.loadtxt("redwine-without-head.csv", delimiter=",")
+ds = np.loadtxt("data/redwine-without-head.csv", delimiter=",")
 
 X = ds[::,:-1]
 X = X / np.max(X, axis=0)
