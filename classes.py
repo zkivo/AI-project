@@ -1,4 +1,6 @@
-from random import random
+#from random import random
+from datetime import datetime
+from numpy.random import default_rng
 import numpy as np
 
 def sigmoid(x):
@@ -6,11 +8,11 @@ def sigmoid(x):
 
 class ANN:
 
-    # this list contains the weight and biases for each layer and nodes
-    # every element is a list of list. 
-    # [[[]]] <-> layer(node(prev links))
+    # contains a list of matrices (array([[..., ...],
+    #                                     [..., ...]])
+    # each describing a layer
     w = []
-
+    
     # it contains the output of each layer
     # this is a list of np.array
     # the first element is 1, because of biases
@@ -19,39 +21,23 @@ class ANN:
     # it adds an error after each fit step of the traning
     list_errors = []
 
-    def __init__(self, n_in: int, n_out: int, 
-                 topology: list, learning_rate: int) -> None:
+    def __init__(self, n_in: int, topology: list, learning_rate: int) -> None:
         self.n_in  = n_in
-        self.n_out = n_out
-        self.topology      = topology
+        self.topology  = topology
         self.learning_rate = learning_rate
-        i = 0
-        for n_nodes in topology:
-            nodes = []
-            for _ in range(n_nodes):
-                links = []
-                prev_n_nodes = n_in
-                if i > 0:
-                    prev_n_nodes = len(self.w[-1])
-                # plus one because we treat the bias as a weight
-                for _ in range(prev_n_nodes + 1):
-                    links.append(random())
-                nodes.append(links)
-            self.w.append(nodes)
-            i += 1
-        nodes = []
-        for _ in range(n_out):
-            links = []
-            if len(topology) > 0:
-                for _ in range(len(self.w[-1]) + 1):
-                    links.append(random())
+        for i, n_nodes in list(enumerate(topology)):
+            if i == 0:
+                a = default_rng(datetime.now().timestamp()).random((n_nodes,n_in + 1))
             else:
-                for _ in range(n_in + 1):
-                    links.append(random())
-            nodes.append(links)
-        self.w.append(nodes)
+                a = default_rng(datetime.now().timestamp()).random((n_nodes,topology[i - 1] + 1))
+            self.w.append(a)
 
-    def forward(self, x : np.array) -> np.ndarray:
+    def forward(self, x : np.array) -> np.array:
+        if not isinstance(x, np.array):
+            if isinstance(x, list):
+                x = np.array(x)
+            else:
+                raise Exception("x must be a list of a np.array object")
         prev_out = x
         prev_out = np.insert(prev_out,0,1)
         prev_out = np.reshape(prev_out, (prev_out.size,1))
@@ -99,4 +85,6 @@ class ANN:
             for j, node in list(enumerate(layer)):
                 for k, weight in list(enumerate(node)):
                     self.w[i][j][k] += self.learning_rate * self.out_layer[i][k] * delta[i][j]
+                    self.w[i][j][k] = self.w[i][j][k].item()
+
 

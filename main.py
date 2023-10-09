@@ -22,10 +22,13 @@ for i,e in list(enumerate(y)):
     else:
         y[i] = 0
 
-ann = ANN(11,1, [5,5],0.2)
+# ann = ANN(11,1, [5,5],0.2)
+ann = ANN(11, [1], 1, 0.2)
 # ann.forward(X[3])
 
 for i, x in list(enumerate(X)):
+    if i > 1:
+        break
     ann.forward(x)
     ann.fit_step(np.array(x),np.array(y[i]))
 
