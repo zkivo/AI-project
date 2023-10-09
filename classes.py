@@ -21,50 +21,53 @@ class ANN:
     # it adds an error after each fit step of the traning
     list_errors = []
 
-    def __init__(self, n_in: int, topology: list, learning_rate: int) -> None:
+    def __init__(self, n_in: int, topology: list, learning_rate: float) -> None:
         self.n_in  = n_in
         self.topology  = topology
         self.learning_rate = learning_rate
         for i, n_nodes in list(enumerate(topology)):
             if i == 0:
-                a = default_rng(datetime.now().timestamp()).random((n_nodes,n_in + 1))
+                a = default_rng(int(datetime.now().timestamp())).random((n_nodes,n_in + 1))
             else:
-                a = default_rng(datetime.now().timestamp()).random((n_nodes,topology[i - 1] + 1))
+                a = default_rng(int(datetime.now().timestamp())).random((n_nodes,topology[i - 1] + 1))
             self.w.append(a)
 
     def forward(self, x : np.array) -> np.array:
-        if not isinstance(x, np.array):
-            if isinstance(x, list):
-                x = np.array(x)
-            else:
-                raise Exception("x must be a list of a np.array object")
+        # if not isinstance(x, np.array):
+        #     if isinstance(x, list):
+        #         x = np.array(x)
+        #     else:
+        #         raise Exception("x must be a list of a np.array object")
         prev_out = x
-        prev_out = np.insert(prev_out,0,1)
-        prev_out = np.reshape(prev_out, (prev_out.size,1))
         self.out_layer.append(prev_out)
-        for layer in self.w:
-            m = np.matrix(layer)
-            print(m,prev_out,"\n")
-            prev_out = np.array(np.dot(m, prev_out))
+        prev_out = np.insert(prev_out,0,1)
+        # prev_out = np.reshape(prev_out, (prev_out.size,1))k
+
+        for m in self.w:
+            # m = np.matrix(layer)
+            # print(m,prev_out,"\n")
+            prev_out = np.dot(m, prev_out)
             prev_out = sigmoid(prev_out)
+            self.out_layer.append(prev_out)
             prev_out = np.insert(prev_out,0,1)
             # prev_out = np.transpose(prev_out)
-            prev_out = np.reshape(prev_out, (prev_out.size,1))
-            self.out_layer.append(prev_out)
-        print(self.out_layer[-1])
+            # prev_out = np.reshape(prev_out, (prev_out.size,1))
+        print(self.out_layer)
         return prev_out
     
 
 
     # cosa succede ai bias?
-    def fit_step(self, x : np.ndarray, exp_out : np.ndarray):
-        self.list_errors.append(np.linalg.norm(exp_out - np.reshape(self.out_layer[-1], (1, self.out_layer[-1].size))))
+    def fit_step(self, x : np.array, exp_out : np.array):
+        # self.list_errors.append(np.linalg.norm(exp_out - np.reshape(self.out_layer[-1], (1, self.out_layer[-1].size))))
+        # self.list_errors.append(exp_out - self.out_layer[-1])
+        self.list_errors.append(np.linalg.norm(exp_out - self.out_layer[-1]))
         #calculating the deltas
         delta = []
         exp_out = np.insert(exp_out,0,1)
-        exp_out = np.reshape(exp_out, (exp_out.size,1))
+        # exp_out = np.reshape(exp_out, (exp_out.size,1))
         t = -1
-        for i, layer in reversed(list(enumerate(self.w))):
+        for i, m in reversed(list(enumerate(self.w))):
             #output layer
             if i == len(self.w) - 1:
                 delta.append(self.out_layer[i + 1] *
@@ -72,7 +75,7 @@ class ANN:
                              (exp_out - self.out_layer[i + 1]))
             else: #hidden layers
                 temp = []
-                next_layer = self.w[i + 1]
+                next_matrix = self.w[i + 1]
                 for j in range(len(layer)):
                     sum = 0
                     for k in range(len(next_layer)):
