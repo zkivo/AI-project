@@ -23,21 +23,21 @@ for i,e in list(enumerate(y)):
         y[i] = 0
 
 # ann = ANN(11,1, [5,5],0.1)
-ann = ANN(11, [2,2,1], 0.05)
+ann = ANN([11,5,5,1], 0.05)
 # ann.forward(np.array(X[0]))
 # ann.fit_step(X[1],y[1])
 # ann.forward(np.array(X[2]))
 # ann.fit_step(X[3],y[3])
 #exit()
 
-for e in range(25):
+for e in range(100):
     for i, x in list(enumerate(X)):
-        ann.forward(np.array(x))
         ann.fit_step(np.array(x),np.array(y[i]))
-    ann.list_errors.append(np.linalg.norm(y[i] - ann.out_layer[-1]))
+    # ann.list_errors.append(np.linalg.norm(y[0] - ann.forward(np.array(X[0]))))
+    ann.list_errors.append((y[0] - ann.forward(np.array(X[0])))**2)
 
 fig, ax = plt.subplots()
-print(ann.list_errors)
+# print(ann.list_errors)
 ax.plot(ann.list_errors)
 plt.show()
 

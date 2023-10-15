@@ -21,14 +21,13 @@ class ANN:
     # contains the norms of (expected output - output of the network)
     list_errors = []
 
-    def __init__(self, n_in: int, topology: list, learning_rate: float) -> None:
-        self.n_in  = n_in
+    def __init__(self, topology: list, learning_rate: float) -> None:
+        # self.n_in  = n_in
         self.topology  = topology
         self.learning_rate = learning_rate
         for i, n_nodes in list(enumerate(topology)):
             if i == 0:
-                # a = default_rng(int(datetime.now().timestamp())).random((n_nodes,n_in + 1))
-                a = default_rng(69).random((n_nodes,n_in + 1))
+                continue
             else:
                 #a = default_rng(int(datetime.now().timestamp())).random((n_nodes,topology[i - 1] + 1))
                 a = default_rng(69).random((n_nodes,topology[i - 1] + 1))
@@ -46,7 +45,7 @@ class ANN:
             self.out_layer.append(prev_out)
             prev_out = np.insert(prev_out,0,1).T
         self.output = self.out_layer[-1]
-        return prev_out
+        return self.output
     
     # m is the matrix of the weights without the biases
     def sum_deltas(self, m : np.array, delta : np.array) -> np.array:
@@ -60,6 +59,7 @@ class ANN:
             
 
     def fit_step(self, x : np.array, exp_out : np.array):
+        self.forward(x)
         delta = []
         delta.append(self.output * (1 - self.output) * (exp_out - self.output))
         for i, out in reversed(list(enumerate(self.out_layer))):
