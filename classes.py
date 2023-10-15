@@ -1,7 +1,5 @@
-#from random import random
-from datetime import datetime
-from numpy.random import default_rng
 import numpy as np
+from numpy.random import default_rng
 
 def sigmoid(x):
     return 1.0 / (1.0 + np.exp(-x))
@@ -60,57 +58,23 @@ class ANN:
 
     def fit_step(self, x : np.array, exp_out : np.array):
         self.forward(x)
+        #self.list_errors.append(np.linalg.norm(exp_out - self.output)**2)
         delta = []
         delta.append(self.output * (1 - self.output) * (exp_out - self.output))
         for i, out in reversed(list(enumerate(self.out_layer))):
             # outlayer
-            if i == len(self.out_layer) - 1: continue
+            if i == len(self.out_layer) - 1 or i == 0: continue
             # for j, node_out in out:
             #     delta.append(node_out * (1 - out) * )
             delta.append(out * (1 - out) * self.sum_deltas(self.w[i][:,1:], delta[-1]))
-        #print(delta)
+        # print(delta)
         delta = list(reversed(delta))
         for L,m in list(enumerate(self.w)):
-            # weight = m[:,1:]
-            # bias = m[:,0]
             for i in range(m.shape[0]): #rows
                 for j in range(m.shape[1]): #columns
                     if j == 0: #bias
                         self.w[L][i][j] += self.learning_rate * delta[L][i]
                     else:
                         self.w[L][i][j] += self.learning_rate * delta[L][i] * self.out_layer[L][j - 1]
-                        
-    # cosa succede ai bias?
-    # def fit_step(self, x : np.array, exp_out : np.array):
-    #     # self.list_errors.append(np.linalg.norm(exp_out - np.reshape(self.out_layer[-1], (1, self.out_layer[-1].size))))
-    #     # self.list_errors.append(exp_out - self.out_layer[-1])
-    #     self.list_errors.append(np.linalg.norm(exp_out - self.out_layer[-1]))
-    #     #calculating the deltas
-    #     delta = []
-    #     exp_out = np.insert(exp_out,0,1)
-    #     # exp_out = np.reshape(exp_out, (exp_out.size,1))
-    #     t = -1
-    #     for i, m in reversed(list(enumerate(self.w))):
-    #         #output layer
-    #         if i == len(self.w) - 1:
-    #             delta.append(self.out_layer[i + 1] *
-    #                          (1 - self.out_layer[i + 1]) *
-    #                          (exp_out - self.out_layer[i + 1]))
-    #         else: #hidden layers
-    #             temp = []
-    #             next_matrix = self.w[i + 1]
-    #             for j in range(len(layer)):
-    #                 sum = 0
-    #                 for k in range(len(next_layer)):
-    #                     sum += next_layer[k][j] * delta[t][k]
-    #                 temp.append(sum * self.out_layer[i + 1] * (1 - self.out_layer[i + 1]))
-    #             delta.append(np.array(temp))
-    #         t += 1
-    #     # updating weights
-    #     for i, layer in list(enumerate(self.w)):
-    #         for j, node in list(enumerate(layer)):
-    #             for k, weight in list(enumerate(node)):
-    #                 self.w[i][j][k] += self.learning_rate * self.out_layer[i][k] * delta[i][j]
-    #                 self.w[i][j][k] = self.w[i][j][k].item()
 
 
