@@ -14,7 +14,7 @@ class ANN:
     
     # it contains the output of each layer, even the input layer
     # size = L + 1 (one is the input layer)
-    out_layer = []
+    layer = []
 
     # contains the norms of (expected output - output of the network)
     list_errors = []
@@ -33,16 +33,16 @@ class ANN:
             ##print(self.w[i][:,0:])
 
     def forward(self, x : np.array) -> np.array:
-        del self.out_layer[:]
+        del self.layer[:]
         prev_out = x.T
-        self.out_layer.append(prev_out)
+        self.layer.append(prev_out)
         prev_out = np.insert(prev_out,0,1)
         for m in self.w:
             prev_out = np.dot(m, prev_out)
             prev_out = sigmoid(prev_out)
-            self.out_layer.append(prev_out)
+            self.layer.append(prev_out)
             prev_out = np.insert(prev_out,0,1).T
-        self.output = self.out_layer[-1]
+        self.output = self.layer[-1]
         return self.output
     
     # m is the matrix of the weights without the biases
@@ -61,9 +61,9 @@ class ANN:
         #self.list_errors.append(np.linalg.norm(exp_out - self.output)**2)
         delta = []
         delta.append(self.output * (1 - self.output) * (exp_out - self.output))
-        for i, out in reversed(list(enumerate(self.out_layer))):
+        for i, out in reversed(list(enumerate(self.layer))):
             # outlayer
-            if i == len(self.out_layer) - 1 or i == 0: continue
+            if i == len(self.layer) - 1 or i == 0: continue
             # for j, node_out in out:
             #     delta.append(node_out * (1 - out) * )
             delta.append(out * (1 - out) * self.sum_deltas(self.w[i][:,1:], delta[-1]))
@@ -75,6 +75,6 @@ class ANN:
                     if j == 0: #bias
                         self.w[L][i][j] += self.learning_rate * delta[L][i]
                     else:
-                        self.w[L][i][j] += self.learning_rate * delta[L][i] * self.out_layer[L][j - 1]
+                        self.w[L][i][j] += self.learning_rate * delta[L][i] * self.layer[L][j - 1]
 
 
