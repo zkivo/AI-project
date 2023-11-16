@@ -1,6 +1,7 @@
-from classes import ANN
+from BayesClassifier import BayesClassifier
 from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPClassifier
+from ANN import ANN
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
@@ -8,6 +9,9 @@ from sklearn.datasets import load_iris
 # MLP from sklearn has the same score of my ANN
 # PCA does not seem to improve the score
 # using two classes bad and good seams to improve about some 0.07 score points
+
+# Bayes classifier improves if the classes are reduces to bad and good
+# about 20 precentage points, from .40 to .60
 
 
 def get_score():
@@ -41,6 +45,11 @@ X_test = ds[int(shape[0] * 0.8):,:-1]
 X_test = X_test / np.max(X_test, axis=0)
 y_test = ds[int(shape[0] * 0.8):, -1]
 
+# drop citric acid feature because does not approximate a normal curve
+# does not improve significantly
+# X_train = np.delete(X_train, 2, 1)
+# X_test  = np.delete(X_test , 2, 1)
+
 for i,e in list(enumerate(y_train)):
     if e >= 6:
         y_train[i] = 1
@@ -52,6 +61,12 @@ for i,e in list(enumerate(y_test)):
         y_test[i] = 1
     else:
         y_test[i] = 0
+
+bcl = BayesClassifier(X_train, y_train)
+
+print("Bayes classifier score: ", bcl.score(X_test, y_test))
+
+exit()
 
 # iris = load_iris()
 # X = np.array(iris.data)

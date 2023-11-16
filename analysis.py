@@ -13,22 +13,18 @@ print("has null values: ", df.isnull().values.any())
 
 X = df.iloc[:, 0:11].values
 y = df.iloc[:, 11].values
-for i,e in list(enumerate(y)):
-    if e >= 6:
-        y[i] = 1
-    else:
-        y[i] = 0
-pca = PCA(n_components = 2)
-
-X = pca.fit_transform(X)
-sns.scatterplot(data=X)
-# fig, ax = plt.subplots()
-# ax.scatter(X[:,0], X[:,1])
-plt.show()
-exit()
 
 x_names = list(df.columns)
 x_names.remove("quality")
+
+fig, ax = plt.subplots(2, 6)
+for i in range(2):
+    for j in range(6):
+        if i == 1 and j == 5: break
+        ax[i][j].hist(df[x_names[int(6*i+j)]], bins=40)
+        ax[i][j].set_xlabel(x_names[6*i+j])
+        ax[i][j].set_ylabel("Frequency")
+plt.show()
 combs = itertools.combinations(x_names, 2)
 
 # corr_matrix = df.corr()
