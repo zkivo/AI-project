@@ -1,7 +1,13 @@
 from classes import ANN
+from sklearn.decomposition import PCA
+from sklearn.neural_network import MLPClassifier
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
+
+# MLP from sklearn has the same score of my ANN
+# PCA does not seem to improve the score
+# using two classes bad and good seams to improve about some 0.07 score points
 
 
 def get_score():
@@ -20,22 +26,26 @@ def shuffle(a, b):
     p = np.random.permutation(len(a))
     return a[p], b[p]
 
-ds = np.loadtxt("data/redwine-without-head.csv", delimiter=",")
+pca = PCA(n_components = 2)
+ds  = np.loadtxt("data/redwine-without-head.csv", delimiter=",")
 
 shape = np.shape(ds)
 
-X = ds[:int(shape[0] * 0.8),:-1]
-X = X / np.max(X, axis=0)
-y = ds[:int(shape[0] * 0.8),-1]
+X_train = ds[:int(shape[0] * 0.8),:-1]
+# X_train = pca.fit_transform(X_train)
+X_train = X_train / np.max(X_train, axis=0)
+y_train = ds[:int(shape[0] * 0.8),-1]
 
 X_test = ds[int(shape[0] * 0.8):,:-1]
+# X_test = pca.fit_transform(X_test)
+X_test = X_test / np.max(X_test, axis=0)
 y_test = ds[int(shape[0] * 0.8):, -1]
 
-for i,e in list(enumerate(y)):
+for i,e in list(enumerate(y_train)):
     if e >= 6:
-        y[i] = 1
+        y_train[i] = 1
     else:
-        y[i] = 0
+        y_train[i] = 0
 
 for i,e in list(enumerate(y_test)):
     if e >= 6:
@@ -50,21 +60,31 @@ for i,e in list(enumerate(y_test)):
 # X_test = X[int(np.shape(X)[0] * 0.8):,:]
 # y_test = y[int(np.shape(y)[0] * 0.8):]
 
-ann = ANN([11,16,16,2], 0.05)
+alpha = 0.001
+epochs = 50
+
+ann = ANN([11,10,9], alpha)
+mlp = MLPClassifier((10), alpha=alpha, activation='logistic', \
+                     max_iter=epochs, shuffle=False, solver='sgd')
+
+mlp.fit(X_train,y_train)
+print("mlp: ", mlp.score(X_test,y_test))
+
 
 first_score = get_score()
 
-# epochs
-for _ in range(50):
-    # train the whole dataset
-    # X,y = shuffle(X,y)
-    for i, x in list(enumerate(X)):
-        ann.fit_step(np.array(x),np.array(y[i]))
-    err = []
-    for i, x in list(enumerate(X)):
-        err.append(np.sum((y[i] - ann.forward(x))**2))
-    err = np.average(np.array(err))
-    ann.list_errors.append(err)
+ann.fit(X_train, y_train, epochs)
+
+# for _ in range(20):
+#     # train the whole dataset
+#     # X,y = shuffle(X,y)
+#     for i, x in list(enumerate(X)):
+#         ann.fit_step(np.array(x),np.array(y[i]))
+#     err = []
+#     for i, x in list(enumerate(X)):
+#         err.append(np.sum((y[i] - ann.forward(x))**2))
+#     err = np.average(np.array(err))
+#     ann.list_errors.append(err)
 
 print("Score = ", get_score(), " ( starting at", first_score, ")")
 

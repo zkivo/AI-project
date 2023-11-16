@@ -35,6 +35,7 @@ class ANN:
             else:
                 a = default_rng(int(datetime.now().timestamp())).random((n_nodes,topology[i - 1] + 1)) * 2 - 1
                 # a = default_rng(69).random((n_nodes,topology[i - 1] + 1)) * 2 - 1
+                # a = default_rng(69).random((n_nodes,topology[i - 1] + 1)) * 2 - 1
                 # a = np.random.rand(n_nodes, topology[i - 1] + 1) * 2 - 1
             self.w.append(a)
             # print(self.w)
@@ -65,6 +66,40 @@ class ANN:
             sums.append(s)
         return np.array(sums)
             
+    def fit(self, X : np.array, exp_y : np.array, epochs = 1):
+        delta = []
+        for _ in range(epochs):
+            del delta[:]
+            for i in range(exp_y.shape[0]):
+                arr = np.zeros(self.topology[-1])
+                arr[int(exp_y[i])] = 1
+                exp_out = arr
+                self.forward(X[i])
+                j = len(self.w) - 1
+                if len(delta) != len(self.w):
+                    delta.append(self.output * (1 - self.output) * (exp_out - self.output))
+                else:
+                    delta[j] += (self.output * (1 - self.output) * (exp_out - self.output))
+                    j -= 1
+                for l, out in reversed(list(enumerate(self.out_layer))):
+                    if l == len(self.out_layer) - 1 or l == 0: continue
+                    if len(delta) != len(self.w):
+                        delta.append(out * (1 - out) * self.sum_deltas(self.w[l][:,1:], delta[-1]))
+                    else:
+                        delta[j] += out * (1 - out) * self.sum_deltas(self.w[l][:,1:], delta[j + 1])
+                        j -= 1
+                if j == len(self.w) - 1:
+                    delta = list(reversed(delta))
+            for L,m in list(enumerate(self.w)):
+                for i in range(m.shape[0]): #rows
+                    for j in range(m.shape[1]): #columns
+                        if j == 0: #bias
+                            self.w[L][i][j] += self.learning_rate * delta[L][i]
+                        else:
+                            self.w[L][i][j] += self.learning_rate * delta[L][i] * self.out_layer[L][j - 1]
+            self.list_errors.append(np.average(delta[-1][:]))
+
+                
 
     def fit_step(self, x : np.array, exp_out : np.array):
         arr = np.zeros(self.topology[-1])
@@ -79,8 +114,8 @@ class ANN:
             if l == len(self.out_layer) - 1 or l == 0: continue
             # for j, node_out in out:
             #     delta.append(node_out * (1 - out) * )
-            for i, node in list(enumerate(out)):
-                pass
+            # for i, node in list(enumerate(out)):
+            #     pass
             # print(out * (1 - out) * self.sum_deltas(self.w[l][:,1:], delta[-1]))
             delta.append(out * (1 - out) * self.sum_deltas(self.w[l][:,1:], delta[-1]))
         # print(delta)
