@@ -1,7 +1,8 @@
 from BayesClassifier import BayesClassifier
+from KNN import KNN
+from ANN import ANN
 from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPClassifier
-from ANN import ANN
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
@@ -50,23 +51,26 @@ y_test = ds[int(shape[0] * 0.8):, -1]
 # X_train = np.delete(X_train, 2, 1)
 # X_test  = np.delete(X_test , 2, 1)
 
-for i,e in list(enumerate(y_train)):
-    if e >= 6:
-        y_train[i] = 1
-    else:
-        y_train[i] = 0
+# for i,e in list(enumerate(y_train)):
+#     if e >= 6:
+#         y_train[i] = 1
+#     else:
+#         y_train[i] = 0
 
-for i,e in list(enumerate(y_test)):
-    if e >= 6:
-        y_test[i] = 1
-    else:
-        y_test[i] = 0
+# for i,e in list(enumerate(y_test)):
+#     if e >= 6:
+#         y_test[i] = 1
+#     else:
+#         y_test[i] = 0
+
+knn = KNN(X_train, y_train, 1)
+print(knn.score(X_test, y_test))
+
+exit()
 
 bcl = BayesClassifier(X_train, y_train)
 
 print("Bayes classifier score: ", bcl.score(X_test, y_test))
-
-exit()
 
 # iris = load_iris()
 # X = np.array(iris.data)
