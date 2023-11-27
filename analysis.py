@@ -5,14 +5,23 @@
 from sklearn.decomposition import PCA
 import itertools
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-df = pd.read_csv("data/winequality-red.csv")
+df = pd.read_csv("data/wine+quality/winequality-white.csv", sep=";")
 print("has null values: ", df.isnull().values.any())
 
 X = df.iloc[:, 0:11].values
 y = df.iloc[:, 11].values
+
+unique, frequency = np.unique(y, return_counts = True)
+
+fig, ax = plt.subplots()
+ax.bar(unique, frequency)
+plt.show()
+
+exit()
 
 x_names = list(df.columns)
 x_names.remove("quality")

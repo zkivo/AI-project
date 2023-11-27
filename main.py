@@ -3,6 +3,7 @@ from KNN import KNN
 from ANN import ANN
 from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPClassifier
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
@@ -32,7 +33,10 @@ def shuffle(a, b):
     return a[p], b[p]
 
 pca = PCA(n_components = 2)
-ds  = np.loadtxt("data/redwine-without-head.csv", delimiter=",")
+#ds  = np.loadtxt("data/redwine-without-head.csv", delimiter=",")
+
+df = pd.read_csv("data/wine+quality/winequality-red.csv", sep=";")
+ds = df.to_numpy()
 
 shape = np.shape(ds)
 
@@ -63,14 +67,14 @@ y_test = ds[int(shape[0] * 0.8):, -1]
 #     else:
 #         y_test[i] = 0
 
-knn = KNN(X_train, y_train, 1)
-print(knn.score(X_test, y_test))
+# knn = KNN(X_train, y_train, 5)
+# print(knn.score(X_test, y_test))
 
-exit()
+# bcl = BayesClassifier(X_train, y_train)
 
-bcl = BayesClassifier(X_train, y_train)
+# print("Bayes classifier score: ", bcl.score(X_test, y_test))
 
-print("Bayes classifier score: ", bcl.score(X_test, y_test))
+# exit()
 
 # iris = load_iris()
 # X = np.array(iris.data)
@@ -80,10 +84,10 @@ print("Bayes classifier score: ", bcl.score(X_test, y_test))
 # y_test = y[int(np.shape(y)[0] * 0.8):]
 
 alpha = 0.001
-epochs = 50
+epochs = 30
 
-ann = ANN([11,10,9], alpha)
-mlp = MLPClassifier((10), alpha=alpha, activation='logistic', \
+ann = ANN([11,10,10,10], alpha)
+mlp = MLPClassifier((10,10), alpha=alpha, activation='logistic', \
                      max_iter=epochs, shuffle=False, solver='sgd')
 
 mlp.fit(X_train,y_train)
