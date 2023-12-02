@@ -35,7 +35,8 @@ def shuffle(a, b):
 pca = PCA(n_components = 2)
 #ds  = np.loadtxt("data/redwine-without-head.csv", delimiter=",")
 
-df = pd.read_csv("data/wine+quality/winequality-red.csv", sep=";")
+df = pd.read_csv("data/wine+quality/winequality-white.csv", sep=";")
+# df = df.drop('density', axis=1)
 ds = df.to_numpy()
 
 shape = np.shape(ds)
@@ -84,10 +85,10 @@ y_test = ds[int(shape[0] * 0.8):, -1]
 # y_test = y[int(np.shape(y)[0] * 0.8):]
 
 alpha = 0.001
-epochs = 30
+epochs = 15
 
-ann = ANN([11,10,10,10], alpha)
-mlp = MLPClassifier((10,10), alpha=alpha, activation='logistic', \
+ann = ANN([11,10,10], alpha)
+mlp = MLPClassifier((10), alpha=alpha, activation='logistic', \
                      max_iter=epochs, shuffle=False, solver='sgd')
 
 mlp.fit(X_train,y_train)
