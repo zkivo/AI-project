@@ -5,8 +5,8 @@ import math
 class KNN:
 
     def __init__(self, X_train, y_train, k = 1) -> None:
-        self.X_train = X_train
-        self.y_train = y_train
+        self.X = X_train
+        self.y = y_train
         self.k = k
 
     def set_k(self, k):
@@ -14,11 +14,11 @@ class KNN:
 
     def predict(self, X):
         dists = SortedDict()
-        rows = np.shape(self.X_train)[0]
+        rows = np.shape(self.X)[0]
         classes = []
         for i in range(int(rows)):
-            dist = math.sqrt(np.sum((X - self.X_train[i])**2))
-            dists[dist] = self.y_train[i]
+            dist = math.sqrt(np.sum((X - self.X[i])**2))
+            dists[dist] = self.y[i]
         for j in range(self.k):
             classes.append(dists.peekitem(j)[1])
         classes = np.array(classes)

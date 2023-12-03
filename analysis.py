@@ -3,6 +3,7 @@
 # 
 
 from sklearn.decomposition import PCA
+from imblearn.over_sampling import RandomOverSampler
 import itertools
 import pandas as pd
 import numpy as np
@@ -19,20 +20,24 @@ y_w = df_w.iloc[:, 11].values
 X_r = df_r.iloc[:, 0:11].values
 y_r = df_r.iloc[:, 11].values
 
+X_w, y_w = RandomOverSampler().fit_resample(X_w,y_w)
+
 unique_w, frequency_w = np.unique(y_w, return_counts = True)
 unique_r, frequency_r = np.unique(y_r, return_counts = True)
 
-# quality frequencies
-# fig, ax = plt.subplots(2,1)
-# ax[0].bar(unique_w, frequency_w)
-# ax[0].set_title("White wine")
-# # ax[0].set_xlabel("Quality")
-# ax[0].set_ylabel("Frequency")
-# ax[1].bar(unique_r, frequency_r)
-# ax[1].set_title("Red wine")
-# ax[1].set_xlabel("Quality")
-# ax[1].set_ylabel("Frequency")
-# plt.show()
+#quality frequencies
+fig, ax = plt.subplots(2,1)
+ax[0].bar(unique_w, frequency_w)
+ax[0].set_title("White wine")
+# ax[0].set_xlabel("Quality")
+ax[0].set_ylabel("Frequency")
+ax[1].bar(unique_r, frequency_r)
+ax[1].set_title("Red wine")
+ax[1].set_xlabel("Quality")
+ax[1].set_ylabel("Frequency")
+plt.show()
+
+exit()
 
 # histograms of features
 x_names = list(df_w.columns)

@@ -34,12 +34,7 @@ class ANN:
                 continue
             else:
                 a = default_rng(int(datetime.now().timestamp())).random((n_nodes,topology[i - 1] + 1)) * 2 - 1
-                # a = default_rng(69).random((n_nodes,topology[i - 1] + 1)) * 2 - 1
-                # a = default_rng(69).random((n_nodes,topology[i - 1] + 1)) * 2 - 1
-                # a = np.random.rand(n_nodes, topology[i - 1] + 1) * 2 - 1
             self.w.append(a)
-            # print(self.w)
-            ##print(self.w[i][:,0:])
 
     def forward(self, x : np.array) -> np.array:
         del self.out_layer[:]
@@ -47,13 +42,11 @@ class ANN:
         self.out_layer.append(prev_out)
         prev_out = np.insert(prev_out, 0, 1)
         for m in self.w:
-            #print(np.array2string(m, separator=',', formatter={'float_kind':lambda x: "%.2f" % x}), np.array2string(prev_out, separator=',', formatter={'float_kind':lambda x: "%.2f" % x}))
             prev_out = np.dot(m, prev_out)
             prev_out = sigmoid(prev_out)
             self.out_layer.append(prev_out)
             prev_out = np.insert(prev_out, 0, 1)
         self.output = self.out_layer[-1]
-        #print(np.array2string(self.output, separator=','))
         return self.output
     
     # m is the matrix of the weights without the biases
@@ -107,18 +100,11 @@ class ANN:
         exp_out = arr
         self.forward(x)
         delta = []
-        # print(self.output * (1 - self.output) * (exp_out - self.output))
         delta.append(self.output * (1 - self.output) * (exp_out - self.output))
         for l, out in reversed(list(enumerate(self.out_layer))):
             # outlayer
             if l == len(self.out_layer) - 1 or l == 0: continue
-            # for j, node_out in out:
-            #     delta.append(node_out * (1 - out) * )
-            # for i, node in list(enumerate(out)):
-            #     pass
-            # print(out * (1 - out) * self.sum_deltas(self.w[l][:,1:], delta[-1]))
             delta.append(out * (1 - out) * self.sum_deltas(self.w[l][:,1:], delta[-1]))
-        # print(delta)
         delta = list(reversed(delta))
         for L,m in list(enumerate(self.w)):
             for i in range(m.shape[0]): #rows
@@ -127,5 +113,15 @@ class ANN:
                         self.w[L][i][j] += self.learning_rate * delta[L][i]
                     else:
                         self.w[L][i][j] += self.learning_rate * delta[L][i] * self.out_layer[L][j - 1]
+        
+    def score(self, X_test, y_test):
+        rows = np.shape(X_test)[0]
+        succ = 0
+        for i in range(int(rows)):
+            out = self.forward(X_test[i])
+            index = np.argmax(out)
+            if y_test[i] == index:
+                succ += 1
+        return succ / rows
 
 
