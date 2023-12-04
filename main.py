@@ -39,8 +39,8 @@ bcl_w = BayesClassifier(X_train_w, y_train_w)
 print("Bayes classifier score: ", bcl_w.score(X_test_w, y_test_w))
 
 alpha_w = 0.001
-epochs_w = 15
-ann_w = ANN([11,20,10], alpha_w)
+epochs_w = 20
+ann_w = ANN([11,10,10], alpha_w)
 ann_w.fit(X_train_w, y_train_w, epochs_w)
 print("ANN = ", ann_w.score(X_test_w, y_test_w))
 
@@ -63,8 +63,8 @@ bcl_r = BayesClassifier(X_train_r, y_train_r)
 print("Bayes classifier score: ", bcl_r.score(X_test_r, y_test_r))
 
 alpha_r = 0.001
-epochs_r = 30
-ann_r = ANN([11,20,10], alpha_r)
+epochs_r = 20
+ann_r = ANN([11,10,10], alpha_r)
 ann_r.fit(X_train_r, y_train_r, epochs_r)
 print("ANN = ", ann_r.score(X_test_r, y_test_r))
 
