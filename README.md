@@ -3,4 +3,6 @@ This is the code implemented for my master AI project. I wrote three AI models: 
 
 # Artificial Neural Network Implementation 
 
-https://github.com/zkivo/Wine-Quality-Classification/assets/58048638/452ac250-773b-4bb6-a470-fc12a114a87e
+![sine_ann-ezgif com-video-to-gif-converter](https://github.com/zkivo/Wine-Quality-Classification/assets/58048638/8a5402d3-f09b-4dae-a352-3012c672a787)
+
+Above is the implemented Artificial Neural Network approximating the sine function. This experiment is based on the Universal approximation theorem.
